@@ -1,0 +1,7 @@
+{
+    "name": "FlexDataGen",
+    "description": "Flexible Random Data Generator",
+    "require": {
+        "markrogoyski/math-php": "0.*"
+    }
+}
