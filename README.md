@@ -22,6 +22,8 @@ Basic usage simply requires instantiation of the DataSet class to generate data 
   $data->printSql();            // print generated dataset as SQL insert statements
 ```
 
+### DataSet Settings
+
 The **settings array** is a hash array mapping table names to table settings. In the following example data for three tables shall be generated. The SQL definition of the three tables in some PostgreSQL database shall be as follows:
 
 ```SQL
@@ -54,6 +56,8 @@ create table image_faces (
 
 Example settings for random data generation for this database can be seen in [tables_demo.php](tables_demo.php).
 
+### Table Settings
+
 Each **table settings array** is a hash array with two keys: `rows` tells the generator how many rows to produce or how to arrive at the required number of rows, and `columns` is a hash array that defines for each table column how to generate the data for the column.
 
 * `rows`: This can either be
@@ -78,7 +82,39 @@ Each **table settings array** is a hash array with two keys: `rows` tells the ge
           ]
         ```
         * `generator`: The name of any class deriving from `Generator`. Some basic generators can be found in [generators](generators) directory, but own generators deriving from those can be implemented and used. In the constructors of these generators it is indicated what options are expected (see below)
-        * `options`: A hash array of options that is passed to the constructor of the chosen generator. Options independent of the chosen generator are: `unique` (boolean specifying wether the generated values must be unique; default: `false`), `nulls` (number between 0 and 1 indicating the percentage of rows in which this column shall have `NULL` values; default: `0`). Most generators also require definition of a `distribution` which may be the name of any class deriving from the `Distribution` class in the [distributions](distributions) directory.
+        * `options`: A hash array of options that is passed to the constructor of the chosen generator (see available generators in next subsection).
+
+### Generators
+
+All generators optionally respect the following options:
+
+* `unique`: boolean specifying wether the generated values must be unique; default: `false`
+* `nulls`: number between 0 and 1 indicating the percentage of rows in which this column shall have `NULL` values; default: `0` 
+* `postProcess`: a function that allows post processing of the generated value. The function receives the generated value as an argument and is expected to return the postprocessed value.
+* `dataSet`: this is automatically added and represents the instance of the DataSet being operated on.
+
+**[CategoryGenerator](generators/CategoryGenerator.php)** takes the following options:
+
+* `source`: either an array of possible categories (e.g. `['Economy', 'Business', 'First']`) or a string representing the name of a plain text file that will be parsed line by line to retrieve the possible categories to choose from.
+* `distribution`: any of the classes implenting the `Distribution` class. The distribution is used to randomly generate array indexes to pick from the available categories specified in `source`.
+
+**[DateGenerator](generators/DateGenerator.php)** produces random dates in the format `YYYY-MM-DD` and takes the following options:
+
+* `min`: Minimum date
+* `max`: Maximum date
+* `distribution`: any name of a class implenting the `Distribution` class. The distribution is used to generate random dates within the range given by `min` and `max`.
+
+**[ForeignKeyGenerator](generators/ForeignKeyGenerator.php)** extends the CategoryGenerator class. Instead of specifying a file or array source for the possible values, this generator obtains possible values from the already available values of another column.
+
+* `table`: Name of the table that holds the column with the possible values
+* `column`: Name of the column that holds the possible values
+* `distribution`: any name of a class implenting the `Distribution` class. The distribution is used to pick a foreign key value.
+
+**[MathPHPGenerator](generators/MathPHPGenerator.php)** offers access to produce values using continuous distributions implemented in the [MathPHP](https://github.com/markrogoyski/math-php) library
+
+* `class`: Fully qualified name of the class in the MathPHP library. This must be a class that implements the `rand()` method. Currently these are all continuous distribution classes
+* `args`: Hash array with arguments expected by the constructor of the chosen class
+* `decimals`: if applicable, desired number of decimals in the generated value; default: `0`
 
 ## Contributing
 
