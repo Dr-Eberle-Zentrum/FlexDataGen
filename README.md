@@ -70,6 +70,13 @@ Each **table settings array** is a hash array with two keys: `rows` tells the ge
     
     * a hash array with settings used to produce the values for the column. The following keys are possible:
     
+        * `callback`: A callback function that is invoked for each row to produce a value for this column. The function is passed an array of values for the previously defined columns for the current row. If only selected columns are required in the passed array, one can define those using the `requiredColumns` setting, e.g. 
+        ```PHP
+          'is_in_debt' => [
+            'callback' => function(&$row) { return $row['balance'] < 0; },
+            'requiredColumns' => [ 'balance' ]
+          ]
+        ```
         * `generator`: The name of any class deriving from `Generator`. Some basic generators can be found in [generators](generators) directory, but own generators deriving from those can be implemented and used. In the constructors of these generators it is indicated what options are expected (see below)
         * `options`: A hash array of options that is passed to the constructor of the chosen generator. Options independent of the chosen generator are: `unique` (boolean specifying wether the generated values must be unique; default: `false`), `nulls` (number between 0 and 1 indicating the percentage of rows in which this column shall have `NULL` values; default: `0`). Most generators also require definition of a `distribution` which may be the name of any class deriving from the `Distribution` class in the [distributions](distributions) directory.
 
