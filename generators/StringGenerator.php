@@ -41,11 +41,27 @@ class StringGenerator extends FlexDataGen {
         $row_no
     ) {
     // ------------------------------------------------------------------------
-        $len = rand($this->options['minLength'], $this->options['maxLength']);
+        $len = $this->getLength();
         $val = '';
         for($i = 0; $i < $len; $i++) {
             $val .= $this->options['alphabet'][$this->distribution->getRandomValue()];
         }
         return $val;
+    }
+
+    // ------------------------------------------------------------------------
+    protected function getLength(
+    ) {
+    // ------------------------------------------------------------------------
+        return 
+            intval(
+                round(
+                    rand(
+                        $this->options['minLength'], 
+                        $this->options['maxLength']
+                    )
+                    , 0
+                )
+            );
     }
 }

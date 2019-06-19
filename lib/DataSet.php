@@ -97,6 +97,14 @@ class DataSet {
     }
 
     // ------------------------------------------------------------------------
+    public function getRowCount(
+        $table_name
+    ) {
+    // ------------------------------------------------------------------------
+        return $this->rowCounts[$table_name];
+    }
+
+    // ------------------------------------------------------------------------
     protected function addToCombination(
         $columnIndex,
         &$prevCombinations
