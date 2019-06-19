@@ -144,6 +144,6 @@ Extend any of the the generator or distribution classes with new classes to eith
 
 ## License
 
-FlexDataGen is licensed under the MIT License.
+FlexDataGen is licensed under the [MIT License](LICENSE).
 
 FlexDataGen uses [MathPHP](https://github.com/markrogoyski/math-php), which is a great library developed by Mark Rogoyski, licensed under the MIT license. 
