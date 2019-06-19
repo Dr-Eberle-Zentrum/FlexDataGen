@@ -22,39 +22,9 @@ Basic usage simply requires instantiation of the DataSet class to generate data 
   $data->printSql();            // print generated dataset as SQL insert statements
 ```
 
-### DataSet Settings
+The **settings array** is a hash array mapping table names to table settings. In the following example data for three tables shall be generated. The SQL definition of the three tables in some PostgreSQL database is given at the top of [tables_demo.php](tables_demo.php).
 
-The **settings array** is a hash array mapping table names to table settings. In the following example data for three tables shall be generated. The SQL definition of the three tables in some PostgreSQL database shall be as follows:
-
-```SQL
--- table of users
-create table users (
-  id serial primary key,
-  username varchar(10) unique not null,
-  lastname text not null,
-  firstname text not null,
-  age integer check (age >= 0),
-  height decimal(3,2) check (height > 0),
-  join_date date not null
-);
-
--- table of images
-create table images (
-  id serial primary key,
-  filename text not null,
-  owner_id integer not null references users (id) on delete cascade on update cascade
-);
-
--- table mapping images to faces of users that are shown in the images
-create table image_faces (
-  user_id integer not null references users (id),
-  image_id integer not null references images (id),
-  certainty decimal(3,2) check (certainty between 0 and 1),
-  primary key (user_id, image_id)
-);
-``` 
-
-Example settings for random data generation for this database can be seen in [tables_demo.php](tables_demo.php).
+An example of corresponding settings for random data generation for this database can be seen in the definition of the `$settings` variable in [tables_demo.php](tables_demo.php).
 
 ### Table Settings
 
@@ -96,25 +66,77 @@ All generators optionally respect the following options:
 **[CategoryGenerator](generators/CategoryGenerator.php)** takes the following options:
 
 * `source`: either an array of possible categories (e.g. `['Economy', 'Business', 'First']`) or a string representing the name of a plain text file that will be parsed line by line to retrieve the possible categories to choose from.
-* `distribution`: any of the classes implenting the `Distribution` class. The distribution is used to randomly generate array indexes to pick from the available categories specified in `source`.
+* `distribution`: any of the classes implementing the `Distribution` class. The distribution is used to randomly generate array indexes to pick from the available categories specified in `source`.
 
 **[DateGenerator](generators/DateGenerator.php)** produces random dates in the format `YYYY-MM-DD` and takes the following options:
 
 * `min`: Minimum date
 * `max`: Maximum date
-* `distribution`: any name of a class implenting the `Distribution` class. The distribution is used to generate random dates within the range given by `min` and `max`.
+* `distribution`: any name of a class implementing the `Distribution` class. The distribution is used to generate random dates within the range given by `min` and `max`.
 
 **[ForeignKeyGenerator](generators/ForeignKeyGenerator.php)** extends the CategoryGenerator class. Instead of specifying a file or array source for the possible values, this generator obtains possible values from the already available values of another column.
 
 * `table`: Name of the table that holds the column with the possible values
 * `column`: Name of the column that holds the possible values
-* `distribution`: any name of a class implenting the `Distribution` class. The distribution is used to pick a foreign key value.
+* `distribution`: any name of a class implementing the `Distribution` class. The distribution is used to pick a foreign key value.
 
-**[MathPHPGenerator](generators/MathPHPGenerator.php)** offers access to produce values using continuous distributions implemented in the [MathPHP](https://github.com/markrogoyski/math-php) library
+**[MathPHPGenerator](generators/MathPHPGenerator.php)** offers access to produce values using continuous distributions implemented in the [MathPHP](https://github.com/markrogoyski/math-php) library. The following options are mandatory:
 
 * `class`: Fully qualified name of the class in the MathPHP library. This must be a class that implements the `rand()` method. Currently these are all continuous distribution classes
 * `args`: Hash array with arguments expected by the constructor of the chosen class
+* `min`: Minimum value
+* `max`: Maximum value
 * `decimals`: if applicable, desired number of decimals in the generated value; default: `0`
+
+**[NumberGenerator](generators/NumberGenerator.php)** generates random numbers and requires the following options:
+
+* `min`: Minimum value
+* `max`: Maximum value
+* `decimals`: if applicable, desired number of decimals in the generated value; default: `0`
+* `distribution`: any name of a class implementing the `Distribution` class. The distribution is used to generate a random number within the range given by `min` and `max` 
+
+**[PatternGenerator](generators/PatternGenerator.php)** generates a string based on a given pattern with the following options:
+
+* `pattern`: a string pattern analogous to those used for `sprintf()`, e.g. `'%s, %s'`
+* `generators`: an array of generator definitions. Any generator that produces a value that can be used for the respective placeholder can be used.
+
+**[SerialGenerator](generators/SerialGenerator.php)** generates an integer number sequence. Options:
+
+* `start`: Minimum value to start with
+
+Note that SerialGenerator ignores the `unique` setting.
+
+**[StringGenerator](generators/StringGenerator.php)** generates random string based on:
+
+* `alphabet`: Characters to pick from when generating the string
+* `minLength`: minimum length of the resulting string
+* `maxLength`: maximum length of the resulting string. The actual length between `minLength` and `maxLength` is currently chosen uniformy random, but this can be overridden by providing a custom implementation of the `getLength()` function
+* `distribution`: any name of a class implementing the `Distribution` class. The distribution is used for picking each character index from the alphabet 
+
+### Distributions
+
+Most generators use distribution functions to pick a random value from a range of possible values. Any distribution class defined in the (distributions)[distributions] directory can be used:
+
+**[UniformDistribution](distributions/UniformDistribution.php)** produces uniformly distributed values from the value range, i.e. every value in the range is equally likely to be generated.
+
+**[NormalDistribution](distributions/NormalDistribution.php)** produces normally distributed values. In the generator's options array, you may provide the additional keys `mean` to override the default mean value of 0.5, and `std_dev` to override the default standard deviation of 0.1. Note that the mean must be between 0 and 1. The mapping to a potentially greater value range as defined in the `min` and `max` options is done automatically.
+
+**[ExponentialDistribution](distributions/ExponentialDistribution.php)** produces an exponentially distributed value, tending to pick values from the lower end of the possible range. In the generator's options array, you may provide the additional `lambda` to override the default lambda value of 0.4. The chosen lambda value should produce random values roughly between 0 and 100. This range is later mapped to the actual value range.
+
+**[FullDistribution](distributions/FullDistribution.php)** is a special distribution that picks consecutively picks values from the generator's range of possible values. It is critical not set `unqiue` to true when using this distribution.
+
+**[CustomDistribution](distributions/CustomDistribution.php)** allows segregating the possible value range by defining a discrete set of relative probabilities (to be defined in the generator's options) for equally sized portions of the value range. First, a value from the set of relative probability is randomly based on the probability distribution in the set. Then the set size is mapped to the desired value space `min`, `max` to retrieve a value. Note this distribution works best for generating integers (e.g. to generate an index in an array). The interpretation of decimals might be misleading. Optimally the size of the probability distribution array is equal to the size of the value range of the desired random value. For instance, consider the following column settings for the travel class of an airline ticket. The distribution will roughly generate 70% `Economy`, 20% `Business` and 10% `First` values. (Of course one could also use an inverted ExponentialDistribution to achieve a similar result)
+
+```PHP
+  'travel_class' => [
+    'generator' => 'CategoryGenerator',
+    'options' => [
+      'source' => ['First', 'Business', 'Economy'],
+      'distribution' => 'CustomDistribution',
+      'probabilityDistribution' => [1, 2, 7]
+    ]
+  ], 
+```
 
 ## Contributing
 
