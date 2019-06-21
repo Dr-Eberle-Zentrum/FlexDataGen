@@ -53,6 +53,25 @@ Each **table settings array** is a hash array with two keys: `rows` tells the ge
         ```
         * `generator`: The name of any class deriving from `Generator`. Some basic generators can be found in [generators](generators) directory, but own generators deriving from those can be implemented and used. In the constructors of these generators it is indicated what options are expected (see below)
         * `options`: A hash array of options that is passed to the constructor of the chosen generator (see available generators in next subsection).
+        * `discard`: A boolean specifying whether this column will be discarded when printing the dataset; default: `false`. Setting this to `true` can be useful e.g. for defining a temporary column that holds the lines read from an external CSV source used incombination with `callback` function to extract data for subsequent columns. In the following example a CSV file with country codes and names is read for a temporary column called `'csv'`. The `code` and `name` columns later extract values from this data:
+        ```PHP
+        'columns' => [
+            'csv' => [ 
+              'generator' => 'CategoryGenerator', 
+              'options' => [
+                'source' => 'countries.csv', // the content here would be "DE,Germany", "FR,France", ...
+                'distribution' => 'FullDistribution'
+              ],
+              'discard' => true // this column is not needed for printing the dataset
+            ],
+            'code' => [
+              'callback' => function(&$row) { return explode(',', $row['csv'])[0]; } // extract code from CSV
+            ],
+            'name' => [ 
+              'callback' => function(&$row) { return explode(',', $row['csv'])[1]; } // extract name from CSV
+            ]
+        ]
+        ```
 
 ### Generators
 
@@ -70,8 +89,8 @@ All generators optionally respect the following options:
 
 **[DateGenerator](generators/DateGenerator.php)** produces random dates in the format `YYYY-MM-DD` and takes the following options:
 
-* `min`: Minimum date
-* `max`: Maximum date
+* `min`: Minimum date (`YYYY-MM-DD` formatted string)
+* `max`: Maximum date (`YYYY-MM-DD` formatted string)
 * `distribution`: any name of a class implementing the `Distribution` class. The distribution is used to generate random dates within the range given by `min` and `max`.
 
 **[ForeignKeyGenerator](generators/ForeignKeyGenerator.php)** extends the CategoryGenerator class. Instead of specifying a file or array source for the possible values, this generator obtains possible values from the already available values of another column.
@@ -102,7 +121,7 @@ All generators optionally respect the following options:
 
 **[SerialGenerator](generators/SerialGenerator.php)** generates an integer number sequence. Options:
 
-* `start`: Minimum value to start with
+* `start`: Minimum integer value to start with
 
 Note that SerialGenerator ignores the `unique` setting.
 
@@ -123,9 +142,9 @@ Most generators use distribution functions to pick a random value from a range o
 
 **[ExponentialDistribution](distributions/ExponentialDistribution.php)** produces an exponentially distributed value, tending to pick values from the lower end of the possible range. In the generator's options array, you may provide the additional `lambda` to override the default lambda value of 0.4. The chosen lambda value should produce random values roughly between 0 and 100. This range is later mapped to the actual value range.
 
-**[FullDistribution](distributions/FullDistribution.php)** is a special distribution that picks consecutively picks values from the generator's range of possible values. It is critical not set `unqiue` to true when using this distribution.
+**[FullDistribution](distributions/FullDistribution.php)** is a special distribution that consecutively picks values from the generator's range of possible values. It is critical not set `unqiue` to true when using this distribution.
 
-**[CustomDistribution](distributions/CustomDistribution.php)** allows segregating the possible value range by defining a discrete set of relative probabilities (to be defined in the generator's options) for equally sized portions of the value range. First, a value from the set of relative probability is randomly based on the probability distribution in the set. Then the set size is mapped to the desired value space `min`, `max` to retrieve a value. Note this distribution works best for generating integers (e.g. to generate an index in an array). The interpretation of decimals might be misleading. Optimally the size of the probability distribution array is equal to the size of the value range of the desired random value. For instance, consider the following column settings for the travel class of an airline ticket. The distribution will roughly generate 70% `Economy`, 20% `Business` and 10% `First` values. (Of course one could also use an inverted ExponentialDistribution to achieve a similar result)
+**[CustomDistribution](distributions/CustomDistribution.php)** allows segregating the possible value range into a discrete set of  relative probabilities (to be defined in the generator's options) for specific sections of the value range. First, a value from the set of relative probabilities is picked based on the probability distribution in the set. Then the set size is mapped to the desired value space `min`, `max` to retrieve a value. Note this distribution works best for generating integers (e.g. to generate an index in an array). The interpretation of decimals might be misleading. Optimally the size of the probability distribution array is equal to the size of the value range of the desired random value. For instance, consider the following column settings for the travel class of an airline ticket. The distribution will roughly generate 70% `Economy`, 20% `Business` and 10% `First` values. (Of course one could also use an inverted ExponentialDistribution to achieve a similar result)
 
 ```PHP
   'travel_class' => [
