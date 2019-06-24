@@ -80,6 +80,7 @@ All generators optionally respect the following options:
 * `unique`: boolean specifying wether the generated values must be unique; default: `false`
 * `nulls`: number between 0 and 1 indicating the percentage of rows in which this column shall have `NULL` values; default: `0` 
 * `postProcess`: a function that allows post processing of the generated value. The function receives the generated value as an argument and is expected to return the postprocessed value.
+* `discard`: boolean specifying whether this column shall be discarded after generating the dataset; default: `false`
 * `dataSet`: this is automatically added and represents the instance of the DataSet being operated on.
 
 **[CategoryGenerator](generators/CategoryGenerator.php)** takes the following options:

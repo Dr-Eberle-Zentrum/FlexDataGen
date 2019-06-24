@@ -69,7 +69,7 @@ class DataSet {
                     // otherwise invoke a user defined callback function to determine value row by row
                     else if(isset($column['callback'])) {
                         $curTableData = &$this->cur[$table_name];
-                        $requiredColumns = isset($column['requiredColumns']) 
+                        $requiredColumns = isset($column['requiredColumns']) && count($column['requiredColumns']) > 0
                             ? $column['requiredColumns']
                             : array_keys($this->cur[$table_name]);
                         $colValues = [];

@@ -22,7 +22,7 @@ abstract class FlexDataGen {
     public function isNull(
     ) {
     // ------------------------------------------------------------------------
-        return isset($this->options['nulls']) 
+        return isset($this->options['nulls']) && $nulls > 0 && $nulls <= 1
             && rand(0, 100) / 100. < $this->options['nulls'];
     }
 
@@ -72,7 +72,7 @@ abstract class FlexDataGen {
     // should be invoked last if overridden
     protected function postProcess(&$value) {
     // ------------------------------------------------------------------------
-        if(isset($this->options['postProcess']))
+        if(isset($this->options['postProcess']) && is_callable($this->options['postProcess']))
             $this->options['postProcess']($value);
     }
 
