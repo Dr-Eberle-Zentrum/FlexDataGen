@@ -27,7 +27,8 @@ class NumberGenerator extends FlexDataGen {
         $this->distribution = Helper::getInstanceArgs(
             $this->options['distribution'], [
                 $this->options['min'],
-                $this->options['max']
+                $this->options['max'],
+                $this->options
             ]);
     }
     

@@ -27,7 +27,8 @@ class DateGenerator extends FlexDataGen {
         $this->distribution = Helper::getInstanceArgs(
             $this->options['distribution'], [
                 $this->minDt->getTimestamp(),
-                $this->maxDt->getTimestamp()
+                $this->maxDt->getTimestamp(),
+                $this->options
             ]);
     }
     
