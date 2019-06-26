@@ -38,6 +38,51 @@ class Column {
     }
 
     // ------------------------------------------------------------------------
+    /*
+        Can be used with 'rows' => [ ... ] to specify the value generation
+        settings for the first column. For subsequent columns, use
+        Column::combinedSubsequent(...)
+    */
+    public static function combineFirst(
+        $column,
+        $referencedTable,
+        $referencedColumn,
+        $probability, // [0,1]
+        $uniqueCombinations = true
+    ) {
+    // ------------------------------------------------------------------------
+        return [
+            'field' => $column,
+            'probability' => $probability,
+            'options' => [
+                'table' => $referencedTable,
+                'column' => $referencedColumn
+            ],
+            'uniqueCombinations' => $uniqueCombinations
+        ];
+    }
+
+    // ------------------------------------------------------------------------
+    public static function combineSubsequent(
+        $valueGeneratorSettings, // settings for generator
+        $column,
+        $minCombinations,
+        $maxCombinations,
+        $minMaxDistribution,
+        $minMaxDistributionOptions = []
+    ) {
+    // ------------------------------------------------------------------------
+        $settings = $valueGeneratorSettings;
+        $settings['field'] = $column;
+        $settings['combinations'] = array_merge([
+            'min' => $minCombinations,
+            'max' => $maxCombinations,
+            'distribution' => $minMaxDistribution
+        ], $minMaxDistributionOptions);
+        return $settings;
+    }
+
+    // ------------------------------------------------------------------------
     public static function generator(
         $generator,
         $generatorOptions = [],
