@@ -36,7 +36,11 @@ Each **table settings array** is a hash array with two keys: `rows` tells the ge
     
     * a function, e.g. `'rows' => function($dataSet) { /* ... */ }`, which is invoked with the current dataset instance as the only argument and is expected to return an integer indicating the number of rows. The example settings for table `images` in [tables_demo.php](tables_demo.php) define that there shall be between 7 and 12 times as many images than users in the database.
     
-    * an array specifiying _how_ to produce the desired number of rows by generating value combinations for multiple columns. Each element in this array defines how values for a column are produced. The first column is always produced by defining the `probability` that a record from the referenced table appears in this table. The values for othe consecutive columns are produced as usual by defining generators and distributions. This way one can, for instance, produce either unique or non-unique foreign key combinations as demonstrated in the example settings for table `image_faces` in [tables_demo.php](tables_demo.php).
+    * an array specifiying _how_ to produce the desired number of rows by generating value combinations for multiple columns. Each element in this array defines how values for a column are produced. 
+    
+    The first column is always produced by defining the `probability` that a record from the referenced table appears in this table. 
+    
+    The values for the consecutive columns are produced as usual by defining generators and distributions. This can be used for generating, e.g., unique foreign key cominbations. If the combinations need not be unique, add `'uniqueCombinations' => false` in the settings for the first column). This is demonstrated in the example settings for table `image_faces` in [tables_demo.php](tables_demo.php).
     
 * `columns`: This is a hash array mapping a column name to column settings. Column setting is defined either as:
 

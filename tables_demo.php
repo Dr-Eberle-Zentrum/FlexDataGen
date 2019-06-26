@@ -181,7 +181,8 @@ $settings = [
 				'options' => [
 					'table' => 'users',
 					'column' => 'id'
-				]
+				],
+				'uniqueCombinations' => true // if unique combinations are desired, this must be set to true
 			],
 			// image_id integer not null references images (id)
 			[
@@ -193,7 +194,6 @@ $settings = [
 				],
 				'generator' => 'ForeignKeyGenerator',
 				'options' => [
-					'unique' => true, // if unique combinations are desired, this must be set to true
 					'table' => 'images',
 					'column' => 'id',
 					'distribution' => 'NormalDistribution'
