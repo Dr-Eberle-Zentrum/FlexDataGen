@@ -1,5 +1,5 @@
 {
-    "name": "FlexDataGen",
+    "name": "dr-eberle-zentrum/flexdatagen",
     "description": "Flexible Random Data Generator",
     "require": {
         "markrogoyski/math-php": "0.*"
