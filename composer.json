@@ -1,5 +1,11 @@
 {
     "name": "dr-eberle-zentrum/flexdatagen",
+    "version": "1.0.0",
+    "private": true,
+    "repository" : { 
+        "type" : "git",
+        "url" : "https://github.com/dr-eberle-zentrum/flexdatagen.git"
+    },
     "description": "Flexible Random Data Generator",
     "require": {
         "markrogoyski/math-php": "0.*"
