@@ -1,0 +1,7 @@
+{
+    "type": "integer",
+    "title": "Number of rows",
+    "description": "The number of rows to generate",
+    "minimum": 1,
+    "default": 100
+}

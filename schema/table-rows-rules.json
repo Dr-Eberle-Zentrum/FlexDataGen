@@ -1,0 +1,12 @@
+{
+    "type": "array",
+    "title": "Rule-based generation of rows",
+    "description": "First",
+    "minItems": 1,
+    "items": [
+        { "$ref": "table-rows-rules-first.json" }
+    ],
+    "additionalItems": {
+        "$ref": "table-rows-rules-rest.json"
+    }
+}

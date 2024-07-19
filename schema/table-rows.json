@@ -1,0 +1,8 @@
+{
+    "title": "Rows",
+    "required": true,
+    "oneOf": [
+        { "$ref": "table-rows-constant.json" },
+        { "$ref": "table-rows-rules.json" }
+    ]
+}

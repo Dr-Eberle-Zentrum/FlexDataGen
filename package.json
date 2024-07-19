@@ -1,0 +1,12 @@
+{
+    "name": "flexdatagen",
+    "version": "1.0.0",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dr-eberle-zentrum/flexdatagen.git"
+    },
+    "dependencies": {
+        "@json-editor/json-editor": "2.15.1"
+    }
+}

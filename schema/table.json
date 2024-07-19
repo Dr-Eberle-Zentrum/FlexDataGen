@@ -1,0 +1,16 @@
+{
+    "title": "FlexDataGen Settings Wizard",
+    "description": "For each table click <i>properties</i> to configure the table settings",
+    "type": "object",
+    "minProperties": 1,
+    "patternProperties": {
+        "^.+": {
+            "type": "object",            
+            "name": "Table",
+            "description": "Table settings",            
+            "properties": {
+                "rows": { "$ref": "table-rows.json" }                
+            }
+        }
+    }
+}

@@ -1,0 +1,7 @@
+{
+    "type": "object",
+    "properties": {
+        "field": { "$ref": "table-rows-rules-first.json#/properties/field" },
+        TODO NEXT
+    }
+}

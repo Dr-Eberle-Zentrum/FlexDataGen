@@ -1,0 +1,44 @@
+{
+    "type": "object",
+    "title": "Rule for column",
+    "headerTemplate": "Rule for column '{{self.field}}'",
+    "required": true,
+    "description": "First column foreign key",    
+    "properties": {
+        "field": {
+            "type": "string",
+            "title": "Column to be filled with foreign keys",            
+            "required": true
+        },
+        "probability": {
+            "type": "number",
+            "title": "Probability that a record from the referenced table appears in this table",            
+            "minimum": 0,
+            "maximum": 1,
+            "required": true
+        },
+        "options": {
+            "type": "object",
+            "title": "Referenced column",
+            "required": true,                    
+            "properties": {
+                "table": {
+                    "type": "string",
+                    "title": "Name of the referenced table holding the column",
+                    "required": true
+                },
+                "column": {
+                    "type": "string",
+                    "title": "Column name",                    
+                    "required": true
+                }                                        
+            }
+        },
+        "uniqueCombinations": {
+            "type": "boolean",
+            "default": true,
+            "title": "Force unique combinations of values in the specified columns?",            
+            "required": true
+        }
+    }
+}
